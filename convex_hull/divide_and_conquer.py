@@ -2,6 +2,25 @@ import random
 import matplotlib.pyplot as plt
 import time
 import numpy as np
+from datetime import datetime
+
+def are_collinear(p1, p2, p3):
+    x1, y1 = p1
+    x2, y2 = p2
+    x3, y3 = p3
+    return (x2 - x1) * (y3 - y1) == (y2 - y1) * (x3 - x1)
+
+def check_collinearity(points):
+    num_points = len(points)
+    for i in range(num_points - 2):
+        p1 = points[i]
+        for j in range(i + 1, num_points - 1):
+            p2 = points[j]
+            for k in range(j + 1, num_points):
+                p3 = points[k]
+                if are_collinear(p1, p2, p3):
+                    return True
+    return False
 
 def generate_random_points(n, x_range=(0, 100), y_range=(0, 100)):
     points = [(random.uniform(*x_range), random.uniform(*y_range)) for _ in range(n)]
@@ -116,6 +135,16 @@ def divide_and_conquer(points):
 if __name__ == "__main__":
     num_points = 100
     points = generate_random_points(num_points)
+    while check_collinearity(points):
+        points = generate_random_points(100)
+    
+    visualize_points(points)
+    start_time = datetime.now()
     points_sorted = sorted(points)
     hull = divide_and_conquer(points_sorted)
+
+    end_time = datetime.now()
+    elapsed_time = end_time - start_time
+
+    print("Elapsed Time:", elapsed_time)
     visualize_points(points, hull)
